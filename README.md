@@ -1,36 +1,143 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Notes App
 
-## Getting Started
+A simple note-taking application built with Next.js, AWS Amplify, and DynamoDB.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Create, read, update, and delete notes
+- Serverless backend using AWS Lambda and DynamoDB
+- Modern UI with Amplify UI React components
+- Responsive design
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Deployment Instructions
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 1. Prerequisites
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- AWS Account
+- Git repository (GitHub, GitLab, or BitBucket)
+- Node.js and npm installed
 
-## Learn More
+### 2. Required Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+Frontend Environment Variables (set in Amplify Console):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `NEXT_PUBLIC_AWS_REGION`: Your AWS region (e.g., us-east-1)
+- `NEXT_PUBLIC_API_ENDPOINT`: Your API Gateway endpoint URL (instructions below)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Backend Environment Variables (automatically set):
 
-## Deploy on Vercel
+- `NOTES_TABLE`: DynamoDB table name (automatically set to "Notes")
+- `AWS_NODEJS_CONNECTION_REUSE_ENABLED`: Enables connection reuse
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 3. Deploy via AWS Amplify Console
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push your code to your Git repository
+
+2. Go to AWS Amplify Console
+
+   - Sign in to your AWS Console
+   - Navigate to AWS Amplify
+   - Click "New App" → "Host Web App"
+   - Connect to your Git provider and select your repository
+
+3. Initial Build Settings
+
+   - The build settings are already configured in `amplify.yml`
+   - For now, just set:
+     - `NEXT_PUBLIC_AWS_REGION`: Your AWS region (e.g., us-east-1)
+   - We'll add the API endpoint after the first deployment
+
+4. First Deploy
+   - Click "Save and deploy"
+   - This will deploy your backend resources first
+
+### 4. Getting the API Endpoint URL
+
+After the first deployment completes:
+
+1. Go to AWS Console and navigate to API Gateway
+
+   - From AWS Console homepage, search for "API Gateway" in the search bar
+   - Click on "API Gateway" service
+
+2. Find your API
+
+   - In the API Gateway dashboard, you should see an API named like "notes-prod" or similar
+   - Click on the API name
+
+3. Get the API Endpoint URL
+   - Look for "Invoke URL" at the top of the page
+   - It should look something like: `https://abc123xyz.execute-api.us-east-1.amazonaws.com/prod`
+   - Copy this URL - this is your `NEXT_PUBLIC_API_ENDPOINT`
+
+### 5. Update Environment Variables
+
+1. Go back to Amplify Console
+
+   - Navigate to your app
+   - Go to "Environment variables" under App settings
+
+2. Add/Update Variables
+
+   - Click "Add variable"
+   - Add `NEXT_PUBLIC_API_ENDPOINT`
+   - Paste the API Gateway Invoke URL you copied
+   - Save
+
+3. Redeploy
+   - Go to your app's main page in Amplify Console
+   - Click "Redeploy this version" to apply the new environment variable
+
+## Local Development
+
+1. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. Create a `.env.local` file with:
+
+   ```
+   NEXT_PUBLIC_AWS_REGION=your-aws-region
+   NEXT_PUBLIC_API_ENDPOINT=your-api-gateway-url
+   ```
+
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+## Project Structure
+
+- `/src/components` - React components
+- `/src/contexts` - React context providers
+- `/src/app` - Next.js app router pages
+- `/amplify/backend` - AWS Amplify backend configuration
+  - `/api` - API configuration
+  - `/function` - Lambda function code
+
+## Technology Stack
+
+- Frontend:
+
+  - Next.js 14
+  - React
+  - AWS Amplify UI React
+  - TypeScript
+
+- Backend:
+  - AWS Lambda
+  - Amazon DynamoDB
+  - Amazon API Gateway
+  - AWS Amplify
+
+## Troubleshooting
+
+If the API endpoint isn't working:
+
+- Make sure you copied the full Invoke URL from API Gateway
+- Verify the URL starts with `https://`
+- Ensure you redeployed the app after adding the API endpoint
+- Check API Gateway CORS settings (already configured in our setup)
+- Verify the Lambda function has proper permissions (already set in our CloudFormation)
