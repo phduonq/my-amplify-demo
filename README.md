@@ -1,6 +1,6 @@
 # Notes App
 
-A simple note-taking application built with Next.js, AWS Amplify, and DynamoDB.
+A simple note-taking application built with Next.js and AWS Amplify Gen 2.
 
 ## Features
 
@@ -9,108 +9,87 @@ A simple note-taking application built with Next.js, AWS Amplify, and DynamoDB.
 - Modern UI with Amplify UI React components
 - Responsive design
 
-## Deployment Instructions
-
-### 1. Prerequisites
+## Prerequisites
 
 - AWS Account
 - Git repository (GitHub, GitLab, or BitBucket)
 - Node.js and npm installed
+- AWS Amplify CLI v3.0 or later installed:
+  ```bash
+  npm install -g @aws-amplify/cli@latest
+  ```
 
-### 2. Required Environment Variables
+## Deployment Instructions
 
-Frontend Environment Variables (set in Amplify Console):
+### 1. Initial Setup with Amplify Gen 2
 
-- `NEXT_PUBLIC_AWS_REGION`: Your AWS region (e.g., us-east-1)
-- `NEXT_PUBLIC_API_ENDPOINT`: Your API Gateway endpoint URL (instructions below)
+1. Clone and install dependencies:
 
-Backend Environment Variables (automatically set):
+   ```bash
+   git clone <your-repo-url>
+   cd my-amplify-app
+   npm install
+   ```
 
-- `NOTES_TABLE`: DynamoDB table name (automatically set to "Notes")
-- `AWS_NODEJS_CONNECTION_REUSE_ENABLED`: Enables connection reuse
+2. Deploy using Amplify Gen 2:
+
+   ```bash
+   amplify deploy
+   ```
+
+   This will:
+
+   - Create your backend resources (API, Lambda, DynamoDB)
+   - Configure permissions automatically
+   - Return your API endpoint URL
+
+3. Copy the API endpoint URL when deployment completes
+
+### 2. Environment Variables Setup
+
+Create a `.env.local` file for local development:
+
+```bash
+NEXT_PUBLIC_AWS_REGION=your-aws-region
+NEXT_PUBLIC_API_ENDPOINT=your-api-endpoint
+```
 
 ### 3. Deploy via AWS Amplify Console
 
 1. Push your code to your Git repository
 
-2. Go to AWS Amplify Console
+2. Go to AWS Amplify Console:
 
-   - Sign in to your AWS Console
+   - Sign in to AWS Console
    - Navigate to AWS Amplify
    - Click "New App" → "Host Web App"
-   - Connect to your Git provider and select your repository
+   - Connect your Git provider and select your repository
 
-3. Initial Build Settings
+3. Configure build settings:
 
-   - The build settings are already configured in `amplify.yml`
-   - For now, just set:
-     - `NEXT_PUBLIC_AWS_REGION`: Your AWS region (e.g., us-east-1)
-   - We'll add the API endpoint after the first deployment
+   - Build settings are pre-configured in `amplify.yml`
+   - Add environment variables:
+     - `NEXT_PUBLIC_AWS_REGION`: Your AWS region
+     - `NEXT_PUBLIC_API_ENDPOINT`: The API endpoint from step 1
 
-4. First Deploy
+4. Deploy:
    - Click "Save and deploy"
-   - The first deployment might show a test artifacts error - this is expected
-   - Wait for the backend resources to be created
+   - Amplify will build and deploy your application
 
-### 4. Getting the API Endpoint URL
+## Project Structure
 
-After the backend resources are created:
-
-1. Go to AWS Console and navigate to API Gateway
-
-   - From AWS Console homepage, search for "API Gateway" in the search bar
-   - Click on "API Gateway" service
-
-2. Find your API
-
-   - In the API Gateway dashboard, you should see an API named like "notes-prod" or similar
-   - Click on the API name
-
-3. Get the API Endpoint URL
-   - Look for "Invoke URL" at the top of the page
-   - It should look something like: `https://abc123xyz.execute-api.us-east-1.amazonaws.com/prod`
-   - Copy this URL - this is your `NEXT_PUBLIC_API_ENDPOINT`
-
-### 5. Update Environment Variables and Redeploy
-
-1. Go back to Amplify Console
-
-   - Navigate to your app
-   - Go to "Environment variables" under App settings
-
-2. Add API Endpoint
-
-   - Click "Add variable"
-   - Add `NEXT_PUBLIC_API_ENDPOINT`
-   - Paste the API Gateway Invoke URL you copied
-   - Save
-
-3. Redeploy
-   - Go to your app's main page in Amplify Console
-   - Click "Redeploy this version"
-   - This deployment should complete successfully
-
-## Troubleshooting
-
-### Common Issues
-
-1. First Deployment Test Artifacts Error
-
-   - This is expected and won't affect your application
-   - The backend resources will still be created
-   - Once you add the API endpoint and redeploy, this error should resolve
-
-2. API Endpoint Issues
-
-   - Make sure you copied the full Invoke URL from API Gateway
-   - Verify the URL starts with `https://`
-   - Ensure you redeployed after adding the endpoint
-   - Check API Gateway CORS settings (already configured in setup)
-
-3. Build Errors
-   - Check the build logs in Amplify Console
-   - Verify all environment variables are set correctly
-   - Make sure your Git repository has the latest code
+```
+/
+├── src/                      # Frontend source code
+│   ├── app/                  # Next.js app directory
+│   ├── components/          # React components
+│   └── contexts/            # React contexts
+├── backend/                 # Amplify Gen 2 backend
+│   ├── api/                # API configurations
+│   └── function/           # Lambda functions
+├── amplify.config.js       # Amplify Gen 2 configuration
+└── amplify.yml            # Amplify build settings
+```
 
 ## Local Development
 
@@ -120,38 +99,61 @@ After the backend resources are created:
    npm install
    ```
 
-2. Create a `.env.local` file with:
+2. Start the development server:
 
-   ```
-   NEXT_PUBLIC_AWS_REGION=your-aws-region
-   NEXT_PUBLIC_API_ENDPOINT=your-api-gateway-url
-   ```
-
-3. Run the development server:
    ```bash
    npm run dev
    ```
 
-## Project Structure
+3. Open [http://localhost:3000](http://localhost:3000)
 
-- `/src/components` - React components
-- `/src/contexts` - React context providers
-- `/src/app` - Next.js app router pages
-- `/amplify/backend` - AWS Amplify backend configuration
-  - `/api` - API configuration
-  - `/function` - Lambda function code
+## Backend Resources
+
+This app creates the following AWS resources:
+
+- **API Gateway**: REST API endpoint
+- **Lambda Function**: Handles note operations
+- **DynamoDB Table**: Stores notes
+  - Table Name: Notes
+  - Partition Key: id (String)
+
+## Troubleshooting
+
+1. Deployment Issues:
+
+   - Ensure you're using Amplify CLI v3.0 or later
+   - Verify AWS credentials are properly configured
+   - Check CloudWatch Logs for Lambda errors
+
+2. API Issues:
+
+   - Verify environment variables are set correctly
+   - Check CORS settings in API Gateway
+   - Ensure Lambda has proper permissions
+
+3. Build Errors:
+   - Check build logs in Amplify Console
+   - Verify Node.js version compatibility
+   - Ensure all dependencies are installed
 
 ## Technology Stack
 
-- Frontend:
+- **Frontend**:
 
   - Next.js 14
   - React
   - AWS Amplify UI React
   - TypeScript
 
-- Backend:
-  - AWS Lambda
+- **Backend**:
+  - AWS Lambda (Node.js 18.x)
   - Amazon DynamoDB
   - Amazon API Gateway
-  - AWS Amplify
+  - AWS Amplify Gen 2
+
+## Important Notes
+
+- This project uses Amplify Gen 2 for improved developer experience
+- The backend is configured using code-first approach
+- All AWS resources are defined in `amplify.config.js`
+- SSR support is configured in build settings
