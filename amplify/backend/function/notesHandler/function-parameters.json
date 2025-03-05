@@ -1,0 +1,17 @@
+{
+  "lambdaLayers": [
+    {
+      "type": "ExternalLayer",
+      "arn": "arn:aws:lambda:${AWS::Region}:177933569100:layer:AWS-Parameters-and-Secrets-Lambda-Extension:4"
+    }
+  ],
+  "environmentVariables": {
+    "NOTES_TABLE": "Notes",
+    "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+  },
+  "permissions": {
+    "storage": {
+      "Notes": ["create", "read", "update", "delete"]
+    }
+  }
+}

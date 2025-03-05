@@ -1,0 +1,18 @@
+{
+  "paths": {
+    "/notes": {
+      "name": "/notes",
+      "lambdaFunction": "notesHandler",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/notes/{id}": {
+      "name": "/notes/{id}",
+      "lambdaFunction": "notesHandler",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}
