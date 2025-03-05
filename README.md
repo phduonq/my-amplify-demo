@@ -49,11 +49,12 @@ Backend Environment Variables (automatically set):
 
 4. First Deploy
    - Click "Save and deploy"
-   - This will deploy your backend resources first
+   - The first deployment might show a test artifacts error - this is expected
+   - Wait for the backend resources to be created
 
 ### 4. Getting the API Endpoint URL
 
-After the first deployment completes:
+After the backend resources are created:
 
 1. Go to AWS Console and navigate to API Gateway
 
@@ -70,14 +71,14 @@ After the first deployment completes:
    - It should look something like: `https://abc123xyz.execute-api.us-east-1.amazonaws.com/prod`
    - Copy this URL - this is your `NEXT_PUBLIC_API_ENDPOINT`
 
-### 5. Update Environment Variables
+### 5. Update Environment Variables and Redeploy
 
 1. Go back to Amplify Console
 
    - Navigate to your app
    - Go to "Environment variables" under App settings
 
-2. Add/Update Variables
+2. Add API Endpoint
 
    - Click "Add variable"
    - Add `NEXT_PUBLIC_API_ENDPOINT`
@@ -86,7 +87,30 @@ After the first deployment completes:
 
 3. Redeploy
    - Go to your app's main page in Amplify Console
-   - Click "Redeploy this version" to apply the new environment variable
+   - Click "Redeploy this version"
+   - This deployment should complete successfully
+
+## Troubleshooting
+
+### Common Issues
+
+1. First Deployment Test Artifacts Error
+
+   - This is expected and won't affect your application
+   - The backend resources will still be created
+   - Once you add the API endpoint and redeploy, this error should resolve
+
+2. API Endpoint Issues
+
+   - Make sure you copied the full Invoke URL from API Gateway
+   - Verify the URL starts with `https://`
+   - Ensure you redeployed after adding the endpoint
+   - Check API Gateway CORS settings (already configured in setup)
+
+3. Build Errors
+   - Check the build logs in Amplify Console
+   - Verify all environment variables are set correctly
+   - Make sure your Git repository has the latest code
 
 ## Local Development
 
@@ -131,13 +155,3 @@ After the first deployment completes:
   - Amazon DynamoDB
   - Amazon API Gateway
   - AWS Amplify
-
-## Troubleshooting
-
-If the API endpoint isn't working:
-
-- Make sure you copied the full Invoke URL from API Gateway
-- Verify the URL starts with `https://`
-- Ensure you redeployed the app after adding the API endpoint
-- Check API Gateway CORS settings (already configured in our setup)
-- Verify the Lambda function has proper permissions (already set in our CloudFormation)
